@@ -3,35 +3,15 @@ import IngredientsList from "./components/IngredientsList"
 import ClaudeRecipe from "./components/ClaudeRecipe"
 import { getRecipeFromChefClaude, getRecipeFromMistral } from "./ai"
 
-/**
- * Challenge: Get a recipe from the AI!
- * 
- * This will be a bit harder of a challenge that will require you
- * to think critically and synthesize the skills you've been
- * learning and practicing up to this point.
- * 
- * We'll start with a mini-quiz:
- * 
- * 1. Think about where the recipe response should live and how you're
- *    going to make sure it doesn't disappear between each state change in
- *    the app. (I don't mean between refreshes of your mini-browser.
- *    You don't need to save this to localStorage or anything more permanent
- *    than in React's memory for now.)
- * 
- * I'm going to save the response in React state.
- * 
- * 2. What action from the user should trigger getting the recipe?
- * When the user clicks the get a recipe button
- */
-
 export default function Main() {
     const [ingredients, setIngredients] = React.useState(
-        ["all the main spices", "pasta", "ground beef", "tomato paste"]
+        ["chicken", "all the main spices", "corn", "heavy cream", "pasta"]
     )
-    const [recipeShown, setRecipeShown] = React.useState(false)
+    const [recipe, setRecipe] = React.useState("")
 
-    function toggleRecipeShown() {
-        setRecipeShown(prevShown => !prevShown)
+    async function getRecipe() {
+        const recipeMarkdown = await getRecipeFromChefClaude(ingredients)
+        setRecipe(recipeMarkdown)
     }
 
     function addIngredient(formData) {
@@ -54,11 +34,11 @@ export default function Main() {
             {ingredients.length > 0 &&
                 <IngredientsList
                     ingredients={ingredients}
-                    toggleRecipeShown={toggleRecipeShown}
+                    getRecipe={getRecipe}
                 />
             }
 
-            {recipeShown && <ClaudeRecipe />}
+            {recipe && <ClaudeRecipe recipe={recipe} />}
         </main>
     )
 }
